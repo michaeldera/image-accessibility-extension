@@ -3,13 +3,15 @@
   "version": "0.1",
   "description": "An extension to set alt attributes on image content on web pages to improve accessibility",
   "author": "Michael Dera",
-  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "permissions": ["activeTab"],
   "options_page": "options.html",
-  "homepage_url": "",
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
+  "content_scripts": [
+    {
+      "matches":["http://*/*", "https://*/*"],
+      "run_at": "document_idle",
+      "js" :["add-alt-attributes.js"]
+    }
+  ],
   "page_action": {
     "default_popup": "popup.html",
     "default_icon": {
