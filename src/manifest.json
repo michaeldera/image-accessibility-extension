@@ -1,5 +1,5 @@
 {
-  "name": "Alt Attributes Extension",
+  "name": "Image a11y",
   "version": "0.1",
   "description": "An extension to set alt attributes on image content on web pages to improve accessibility",
   "author": "Michael Dera",
