@@ -1,6 +1,6 @@
 console.log("Adding alt attributes");
 
-const IR_ENDPOINT = "http://localhost:7071/api/AnalyseImage?url="
+const IR_ENDPOINT = "https://image-recognition-function.azurewebsites.net/api/AnalyseImage?url="
 
 //create a regex expression which will be used to test if our URL is absolute or definite.Is TRUE for absolute values
 let exp = new RegExp('^(?:[a-z]+:)?//', 'i');
@@ -12,6 +12,8 @@ for (let i = 0; i < images.length; i++) {
   let img = images.item(i);
   //Check for all images that do not have alt attributes and set the alt attribute
 
+
+  //REMEMBER TO CHANGE THIS TO !
   if(img.hasAttribute("alt")){
     let srcAttribute = img.getAttribute("src");
 
