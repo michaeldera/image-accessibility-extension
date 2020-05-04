@@ -3,7 +3,7 @@
   "version": "0.1",
   "description": "An extension to set alt attributes on image content on web pages to improve accessibility",
   "author": "Michael Dera",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "tabs"],
   "options_page": "options.html",
   "content_scripts": [
     {
