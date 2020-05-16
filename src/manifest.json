@@ -1,7 +1,7 @@
 {
-  "name": "Image a11y",
+  "name": "Image Accessibility",
   "version": "0.1",
-  "description": "An extension to set alt attributes on image content on web pages to improve accessibility",
+  "description": "An extension to set alt attributes on image content using image recognition on web pages to improve accessibility",
   "author": "Michael Dera",
   "permissions": [
     "activeTab",
