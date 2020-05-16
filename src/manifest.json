@@ -3,13 +3,28 @@
   "version": "0.1",
   "description": "An extension to set alt attributes on image content on web pages to improve accessibility",
   "author": "Michael Dera",
-  "permissions": ["activeTab", "tabs"],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "*://*.azurewebsites.net/*"
+  ],
   "options_page": "options.html",
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
   "content_scripts": [
     {
-      "matches":["http://*/*", "https://*/*"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
       "run_at": "document_idle",
-      "js" :["add-alt-attributes.js"]
+      "js": [
+        "add-alt-attributes.js"
+      ]
     }
   ],
   "page_action": {
