@@ -1,7 +1,4 @@
-console.log('Adding alt attributes');
-
-const IR_ENDPOINT =
-  'https://image-recognition-function.azurewebsites.net/api/AnalyseImage?url=';
+const IR_ENDPOINT = 'https://image-recognition-function.azurewebsites.net/api/AnalyseImage?url=';
 
 // create a regex expression which will be used to test if our URL is absolute or definite.Is TRUE for absolute values
 const exp = new RegExp('^(?:[a-z]+:)?//', 'i');
@@ -12,8 +9,7 @@ const images = document.getElementsByTagName('img');
 for (let i = 0; i < images.length; i++) {
   const img = images.item(i);
   // Check for all images that do not have alt attributes and set the alt attribute
-  // TODO : CHANGE THIS TO !
-  if (img.hasAttribute('alt')) {
+  if (!img.hasAttribute('alt')) {
     const srcAttribute = img.getAttribute('src');
     const src = exp.test(srcAttribute) ?
     srcAttribute :
@@ -22,20 +18,22 @@ for (let i = 0; i < images.length; i++) {
     chrome.runtime.sendMessage({src: url}, (callbackMessage) => {
       if (callbackMessage.response) {
         const data = callbackMessage.response;
-        console.log(data); // this is JSON
-        /*
-        append your alt image data here.
-        Right now your server is return a 401 with the following message:
+        let caption;
+        //Store array of captions returned from function
+        let captionsArray = data.description ? data.description.captions: [];
+        //check if captions was actually return by checkiing if captions is defined
 
-         " Access denied due to invalid subscription key or wrong API endpoint.
-           Make sure to provide a valid key for an active subscription and use
-           a correct regional API endpoint.."
-
-        Once that is resolved you will get your json data here.
-        */
-
-        // TODO:  replace with alt image data from server
-        img.setAttribute('alt', 'ALT_ATTRIBUTE_FROM_IMAGE_RECOGNITION');
+        if(captionsArray.length > 0){
+          const sortedArray = captionsArray.sort((a, b) => {
+            return a.confidence - b.confidence;
+          });
+          // get the first element from the sorted array. i.e the one the image recognition function has greatest confidence about. 
+          caption = sortedArray[0].text;
+        } else { 
+          // assume images with non-standard formats are decorative  are decorative
+          caption = ""
+        }
+        img.setAttribute('alt', caption);
       }
       if (callbackMessage.error) {
         const err = callbackMessage.error;
