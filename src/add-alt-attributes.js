@@ -11,9 +11,10 @@ for (let i = 0; i < images.length; i++) {
   // Check for all images that do not have alt attributes and set the alt attribute
   if (!img.hasAttribute('alt')) {
     const srcAttribute = img.getAttribute('src');
+    
     const src = exp.test(srcAttribute) ?
     srcAttribute :
-    `${window.location.origin + window.location.pathname + srcAttribute}`;
+    new URL(srcAttribute, document.baseURI).href;
     const url = `${IR_ENDPOINT}${src}`;
     chrome.runtime.sendMessage({src: url}, (callbackMessage) => {
       if (callbackMessage.response) {
