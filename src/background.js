@@ -1,9 +1,9 @@
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-      const IR_LOGIN_ENDPOINT = 'https://image-recognition-function.azurewebsites.net/api/login';
+      const IR_LOGIN_ENDPOINT = 'https://image-recognition-function.azurewebsites.net/api/AnalyseImage?';
 
       /** Get client's authentication info.
-      * @return {Headers} authData as an object with key: token.
+      * @return {Headers} authorization headers.
       */
       const getAuthHeaders = () => {
         const localToken = localStorage.getItem('img_a11y_token') || false;
