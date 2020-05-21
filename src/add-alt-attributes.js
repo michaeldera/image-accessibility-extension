@@ -20,7 +20,6 @@ for (let i = 0; i < images.length; i++) {
     chrome.runtime.sendMessage({src: url}, (callbackMessage) => {
       if (callbackMessage.response) {
         const data = callbackMessage.response;
-        console.log('returned', data);
         let caption;
         // Store array of captions returned from function
         const captionsArray = data.description ? data.description.captions: [];

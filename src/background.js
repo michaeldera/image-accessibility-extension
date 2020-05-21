@@ -44,7 +44,6 @@ chrome.runtime.onMessage.addListener(
             body: 'googeToken=1234', // @todo set google token from Chrome.client here
           })
               .then((response) => {
-                return 'Test';
                 if (!response.ok) {
                   throw Error(response.statusText);
                 }
