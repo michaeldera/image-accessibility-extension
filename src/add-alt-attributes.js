@@ -9,9 +9,10 @@ const images = document.getElementsByTagName('img');
 for (let i = 0; i < images.length; i++) {
   const img = images.item(i);
   // Check for all images that do not have alt attributes and set the alt attribute
+  // @todo switch ! back
   if (!img.hasAttribute('alt')) {
     const srcAttribute = img.getAttribute('src');
-    
+
     const src = exp.test(srcAttribute) ?
     srcAttribute :
     new URL(srcAttribute, document.baseURI).href;
@@ -20,19 +21,19 @@ for (let i = 0; i < images.length; i++) {
       if (callbackMessage.response) {
         const data = callbackMessage.response;
         let caption;
-        //Store array of captions returned from function
-        let captionsArray = data.description ? data.description.captions: [];
-        //check if captions was actually return by checkiing if captions is defined
+        // Store array of captions returned from function
+        const captionsArray = data.description ? data.description.captions: [];
+        // check if captions was actually return by checkiing if captions is defined
 
-        if(captionsArray.length > 0){
+        if (captionsArray.length > 0) {
           const sortedArray = captionsArray.sort((a, b) => {
             return a.confidence - b.confidence;
           });
-          // get the first element from the sorted array. i.e the one the image recognition function has greatest confidence about. 
+          // get the first element from the sorted array. i.e the one the image recognition function has greatest confidence about.
           caption = sortedArray[0].text;
-        } else { 
+        } else {
           // assume images with non-standard formats are decorative  are decorative
-          caption = ""
+          caption = '';
         }
         img.setAttribute('alt', caption);
       }
