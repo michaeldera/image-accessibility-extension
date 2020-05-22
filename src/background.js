@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-      const IR_LOGIN_ENDPOINT = 'https://image-recognition-function.azurewebsites.net/api/AnalyseImage?';
+      const IR_LOGIN_ENDPOINT = 'https://image-recognition-function.azurewebsites.net/api/authenticate';
 
       /** Get client's authentication info.
       * @return {Headers} authorization headers.
@@ -39,9 +39,12 @@ chrome.runtime.onMessage.addListener(
       const signInUser = () => {
         return new Promise((resolve, reject) => {
           console.log('signing in...');
+          const tokenClaim = {
+            token: "123test"
+          } // @todo set google token from Chrome.client here
           fetch(IR_LOGIN_ENDPOINT, {
             method: 'POST',
-            body: 'googeToken=1234', // @todo set google token from Chrome.client here
+            body: JSON.stringify(tokenClaim),
           })
               .then((response) => {
                 if (!response.ok) {
@@ -50,8 +53,7 @@ chrome.runtime.onMessage.addListener(
                 return response.json();
               })
               .then((data) => {
-                // @todo save received authData here
-                saveAuthInfo('testing');
+                saveAuthInfo(data.message); // @todo save received token here. temporarily saving message
                 resolve();
               })
               .catch((error) => {
