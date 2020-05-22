@@ -40,8 +40,8 @@ chrome.runtime.onMessage.addListener(
         return new Promise((resolve, reject) => {
           console.log('signing in...');
           const tokenClaim = {
-            token: "123test"
-          } // @todo set google token from Chrome.client here
+            token: '123test',
+          }; // @todo set google token from Chrome.client here
           fetch(IR_LOGIN_ENDPOINT, {
             method: 'POST',
             body: JSON.stringify(tokenClaim),
