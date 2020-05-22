@@ -29,7 +29,7 @@ let scheduleProcessImages = false;
 * @param {Array<Node>} imageNodes - imgs to analyze.
 */
 const processImages = (imageNodes) => {
-  filterDuplicates(imageNodes).forEach((img) => {
+  imageNodes.forEach((img) => {
     // Check for all images that do not have alt attributes and set the alt attribute
     const isWatched = watchedNodes.includes(img);
     // if the img is on watchlist, it must be updated regardless
