@@ -4,16 +4,16 @@ const IR_ENDPOINT = 'https://image-recognition-function.azurewebsites.net/api/An
 const exp = new RegExp('^(?:[a-z]+:)?//', 'i');
 
 /**
- * array of nodes that we added alt attributes to, so we monitor
+ * odes that we added alt attributes to, so we monitor
  *
- * @var {Array}
+ * @type {Array<Node>}
  */
 const watchedNodes = [];
 
 /**
- * Array of images that will be processed when processImages is run
+ * images that will be processed when processImages is run
  *
- * @var {Array}
+ * @type {Array<Node>}
  */
 const imagesForProcessing = [];
 
@@ -21,7 +21,7 @@ const imagesForProcessing = [];
  * When changes in the DOM are detected, this can be checked to see if processImages should be called
  * If the changes in the DOM did not include new "alt-less" images, this will still be false;
  *
- * @var {Boolean}
+ * @type {Boolean}
  */
 let scheduleProcessImages = false;
 
@@ -29,55 +29,63 @@ let scheduleProcessImages = false;
 * @param {Array<Node>} imageNodes - imgs to analyze.
 */
 const processImages = (imageNodes) => {
-  imageNodes.forEach((img) => {
-    // Check for all images that do not have alt attributes and set the alt attribute
-    const isWatched = watchedNodes.includes(img);
-    // if the img is on watchlist, it must be updated regardless
-    if (!img.hasAttribute('alt') || isWatched ) {// @todo switch ! back
-      const srcAttribute = img.getAttribute('src');
-      const src = exp.test(srcAttribute) ?
+  /* get only the unique image URLs. To prevent multiple calls to the API for the same image.
+   * Like if the image the same https:/same/path/image.jpg is used twice on the same page.
+   */
+  const uniqImages = filterDuplicates(imageNodes);
+
+  // analyze each (unique URL) image Node
+  uniqImages.forEach((img) => {
+    const srcAttribute = img.getAttribute('src');
+    const src = exp.test(srcAttribute) ?
     srcAttribute :
     new URL(srcAttribute, document.baseURI).href;
-      const url = `${IR_ENDPOINT}${src}`;
-      chrome.runtime.sendMessage({src: url}, (callbackMessage) => {
-        if (callbackMessage.response) {
-          const data = callbackMessage.response;
-          let caption;
-          // Store array of captions returned from function
-          const captionsArray = data.description ? data.description.captions: [];
-          // check if captions was actually return by checkiing if captions is defined
+    const url = `${IR_ENDPOINT}${src}`;
+    chrome.runtime.sendMessage({src: url}, (callbackMessage) => {
+      if (callbackMessage.response) {
+        const data = callbackMessage.response;
+        let caption;
+        // Store array of captions returned from function
+        const captionsArray = data.description ? data.description.captions: [];
+        // check if captions was actually return by checkiing if captions is defined
 
-          if (captionsArray.length > 0) {
-            const sortedArray = captionsArray.sort((a, b) => {
-              return a.confidence - b.confidence;
-            });
+        if (captionsArray.length > 0) {
+          const sortedArray = captionsArray.sort((a, b) => {
+            return a.confidence - b.confidence;
+          });
             // get the first element from the sorted array. i.e the one the image recognition function has greatest confidence about.
-            caption = sortedArray[0].text;
-          } else {
+          caption = sortedArray[0].text;
+        } else {
           // assume images with non-standard formats are decorative  are decorative
-            caption = '';
-          }
-          img.setAttribute('alt', caption);
-          // if node is not on mutation watchlist, added
+          caption = '';
+        }
+        // get all other images that have the same URL src, and apply same description
+        imageNodes.filter((otherImg) => {
+          return otherImg.getAttribute('src') == srcAttribute;
+        }).forEach((otherImg) => {
+          otherImg.setAttribute('alt', caption);
+          const isWatched = watchedNodes.includes(otherImg);
+          // if node is not on mutation watchlist, add it
           if (!isWatched) {
-            watchedNodes.push(img);
+            watchedNodes.push(otherImg);
           };
-        }
-        if (callbackMessage.error) {
-          const err = callbackMessage.error;
-          console.error(err);
+        });
+      }
+      if (callbackMessage.error) {
+        const err = callbackMessage.error;
+        console.error(err);
         // handle your errors here
-        }
-      });
-    }
+      }
+    });
   });
+
   scheduleProcessImages = false; // reset
   imagesForProcessing.splice(0, imagesForProcessing.length);
 };
 
 /**
- * @return {Array} - Unique image srcs
- * @param {Array} images - DOM nodes of img elements
+ * @return {Array<Node>} - Unique image srcs
+ * @param {Array<Node>} images - DOM nodes of img elements
  */
 const filterDuplicates = (images) => {
   const uniqImages = [];
@@ -93,12 +101,14 @@ const filterDuplicates = (images) => {
 };
 
 /**
- *  All available img elements
- *  @return {Array}
+ *  All available img elements without alt attributes
+ *  @return {Array<Node>}
  */
-const htmlImagesCollection = () => {
+const noAltImagesCollection = () => {
   const images = document.getElementsByTagName('img');
-  return [...images];
+  return [...images].filter((img)=> {
+    return !img.hasAttribute('alt');
+  });
 };
 
 /**
@@ -134,11 +144,10 @@ const observer = new MutationObserver((mutations)=>{
   }
 });
 
-
 // when page loads:
 
 // a) process images on the page
-processImages(htmlImagesCollection());
+processImages(noAltImagesCollection());
 // b) attach an observer for document changes
 observer.observe(document.body, {
   attributes: true,
