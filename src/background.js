@@ -53,7 +53,7 @@ chrome.runtime.onMessage.addListener(
                 return response.json();
               })
               .then((data) => {
-                saveAuthInfo(data.message); // @todo save received token here. temporarily saving message
+                saveAuthInfo(data.message); // @todo save real token here.
                 resolve();
               })
               .catch((error) => {
@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener(
       // Login user first and get an authToken;
         signInUser()
             .then(() => {
-              if (request.src) { // if there's an src in the request, analyze the src
+              if (request.src) { // if there's an src in the request, analyze it
                 analyzeImage();
               }
             })
