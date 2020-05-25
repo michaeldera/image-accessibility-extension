@@ -1,0 +1,43 @@
+{
+  "name": "image-accessibility-extension",
+  "version": "0.1.0",
+  "description": "This is an extension to work on Chromium Browsers (Google Chrome and Microsoft Edge) that checks webpages for images without alt attributes and replaces them with alt attributes",
+  "main": "add-alt-attributes.js",
+  "scripts": {
+    "test": "./node_modules/.bin/jest",
+    "lint": "./node_modules/.bin/eslint ./src/add-alt-attributes.js ./src/background.js ./src/image-a11y.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaeldera/image-accessibility-extension.git"
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "accessibility"
+  ],
+  "author": "https://github.com/michaeldera",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/michaeldera/image-accessibility-extension/issues"
+  },
+  "homepage": "https://github.com/michaeldera/image-accessibility-extension#readme",
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@types/jest": "^25.2.3",
+    "babel-jest": "^26.0.1",
+    "babel-plugin-rewire": "^1.2.0",
+    "bufferutil": "^4.0.1",
+    "canvas": "^2.6.1",
+    "eslint": "^7.1.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-jest": "^23.13.1",
+    "jest": "^26.0.1",
+    "jest-webextension-mock": "^3.6.0",
+    "rewire": "^5.0.0",
+    "typescript": "^3.9.3",
+    "utf-8-validate": "^5.0.2"
+  },
+  "dependencies": {}
+}
